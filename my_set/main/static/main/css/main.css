@@ -1,0 +1,28 @@
+body {
+    background-color: rgb(255, 255, 255); 
+}
+a {
+    color: rgb(88, 68, 121);
+    text-decoration: none;
+}
+.menu {
+    position: fixed;
+    font-size: 23px;
+    background-color: rgb(236, 236, 236);
+    height: 7vh;
+    min-height: 65px;
+    width: 100vw;
+}
+.menu-head span {
+    position: absolute;
+    left: 20%;
+    top: 50%;
+    transform: translate(0%, -50%);
+}
+.menu-head a {
+    position: absolute;
+    font-size: 20px;
+    right: 20%;
+    top: 50%;
+    transform: translate(0%, -50%);
+}

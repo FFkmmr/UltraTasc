@@ -1,0 +1,30 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css">
+    <link rel="stylesheet" href="{% static 'main/css/main.css' %}">
+    <title>{% block title %} {% endblock %}</title>
+</head>
+<body>
+    <aside>
+        <div class="menu">
+            <div class="menu-head">
+                <span>MySet - {{ handler|default:"Portfolio handler" }}</span>
+                {% if isEntered %}
+                    <a href="">{{ user }}</a>
+                {% else %}
+                    <a href="">Log in <i class="fas fa-door-open"></i></a>
+                {% endif %}
+            </div>
+        </div>
+    </aside>
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+</body>
+</html> 
