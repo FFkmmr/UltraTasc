@@ -17,7 +17,8 @@
                 {% if isEntered %}
                     <a href="">{{ user }}</a>
                 {% else %}
-                    <a href="">Log in <i class="fas fa-door-open"></i></a>
+                    <a style="margin-right: 130px;">Hallo, {{request.user}}!</a>    
+                    <a href="{% url 'logout' %}">Logout  <i class="fas fa-door-open"></i></a>
                 {% endif %}
             </div>
         </div>
