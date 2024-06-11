@@ -1,11 +1,10 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-
 from django.contrib.auth import authenticate, login, logout
 from .forms import CreateUserForm
 from django.contrib.auth.decorators import login_required
 
-def registerPage(request):
+def register_page(request):
     if request.user.is_authenticated:
         return redirect('home')
     else:
@@ -21,12 +20,7 @@ def registerPage(request):
         context = {'form': form}
         return render(request, 'main/register.html', context)
 
-
-
-def loginPage(request):
-    if request.user.is_authenticated:
-        return redirect('home')
-    else:
+def login_page(request):
         if request.method == 'POST':
             username = request.POST.get('username')
             password = request.POST.get('password')
@@ -39,16 +33,10 @@ def loginPage(request):
         context = {}
         return render(request, 'main/login.html', context)
 
-def logoutUser(request):
+def logout_user(request):
     logout(request)
     return redirect('login')
 
 @login_required(login_url='login')
 def index(request):
-    values = {
-        'isEntered': False,
-        'handler': 'Portfolio handler',
-        'user': 'name',
-    }
-    template_name = 'main/index.html'
-    return render(request, template_name, {'values': values})
+    return render(request, 'main/index.html')
