@@ -4,6 +4,11 @@ from django.contrib.auth import authenticate, login, logout
 from .forms import CreateUserForm
 from django.contrib.auth.decorators import login_required
 
+@login_required(login_url='login')
+def index(request):
+    return render(request, 'main/index.html')
+
+
 def register_page(request):
     if request.user.is_authenticated:
         return redirect('home')
@@ -19,7 +24,6 @@ def register_page(request):
             
         context = {'form': form}
         return render(request, 'main/register.html', context)
-
 def login_page(request):
         if request.method == 'POST':
             username = request.POST.get('username')
@@ -32,11 +36,7 @@ def login_page(request):
                 messages.info(request, 'Username OR password is incorrect.')
         context = {}
         return render(request, 'main/login.html', context)
-
 def logout_user(request):
     logout(request)
     return redirect('login')
 
-@login_required(login_url='login')
-def index(request):
-    return render(request, 'main/index.html')
