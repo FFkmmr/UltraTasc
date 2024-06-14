@@ -3,6 +3,11 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from .forms import CreateUserForm
+from django.http import JsonResponse
+from django.template.loader import render_to_string
+from django.db.models import Q
+import json
+from django.views.decorators.csrf import csrf_exempt
 
 from .models import Project, Technology, Industry
 
@@ -15,6 +20,7 @@ def index(request):
         'industries': industries,
     }
     return render(request, 'main/index.html', context)
+
 def register_page(request):
     if request.user.is_authenticated:
         return redirect('home')
@@ -46,32 +52,41 @@ def logout_user(request):
     logout(request)
     return redirect('login')
 
-from django.db.models import Q
 
-def project_list(request):
-    selected_industries = request.GET.getlist('industries[]')
-    selected_technologies = request.GET.getlist('technologies[]')
+def project_list_view(request):
     projects = Project.objects.all()
-
-    if selected_industries:
-        projects = projects.filter(industries__name__in=selected_industries).distinct()
-    if selected_technologies:
-        projects = projects.filter(technologies__name__in=selected_technologies).distinct()
-
-    if selected_industries:
-        for industry in selected_industries:
-            projects = projects.exclude(~Q(industries__name=industry))
-    if selected_technologies:
-        for technology in selected_technologies:
-            projects = projects.exclude(~Q(technologies__name=technology))
-
     industries = Industry.objects.all()
     technologies = Technology.objects.all()
 
     context = {
+        'projects': projects,
         'industries': industries,
         'technologies': technologies,
+    }
+
+    return render(request, 'main/projects.html', context)
+
+@csrf_exempt
+def project_filter_view(request):
+    selected_industries = request.POST.get('industries')
+    selected_technologies = request.POST.get('technologies')
+    selected_industries = json.loads(selected_industries) if selected_industries else []
+    selected_technologies = json.loads(selected_technologies) if selected_technologies else []
+    
+    filters = {}
+
+    if selected_industries:
+        filters['industries__name__in'] = selected_industries
+    if selected_technologies:
+        filters['technologies__name__in'] = selected_technologies
+
+    projects = Project.objects.filter(
+        **filters
+    )
+
+    context = {
         'projects': projects,
     }
-    
-    return render(request, 'main/projects.html', context)
+
+    html = render_to_string('main/projects.html', context)
+    return JsonResponse({'html': html})

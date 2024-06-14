@@ -78,19 +78,23 @@ document.addEventListener('DOMContentLoaded', function () {
         const selectedTechnologies = Array.from(technologyCheckboxes)
                                           .filter(checkbox => checkbox.checked)
                                           .map(checkbox => checkbox.value);
-
-        fetch('{% url "project_list" %}', {
-            method: 'GET',
+        const projectListUrl = "/project_list/";         
+        fetch( projectListUrl, {
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest',
             },
-            body: JSON.stringify({
-                industries: selectedIndustries,
-                technologies: selectedTechnologies
-            }),
+            body: {
+                industries: JSON.stringify(selectedIndustries),
+                technologies: JSON.stringify(selectedTechnologies)
+            },
         })
-        .catch(error => console.error('Error:', error));    
+        .then(response => response.json())
+        .then(data => {
+            const projectContainer = document.getElementById('projects');
+            projectContainer.innerHTML = data.html;
+        })
+        .catch(error => console.error('Error:', error));
     }
 
     industryCheckboxes.forEach(checkbox => {
@@ -101,3 +105,4 @@ document.addEventListener('DOMContentLoaded', function () {
         checkbox.addEventListener('change', updateProjects);
     });
 });
+
