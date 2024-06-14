@@ -9,90 +9,56 @@
             <div class="industries">
                 <div class="nav">
                     <h4>Industries</h4> 
-                    <input type="text" placeholder="Filter industries...">
-                    <button type="button" class="btn btn-outline-dark">Reset</button>
+                    <input type="text" id="industryFilter" placeholder="Filter industries...">
+                    <button type="button" id="resetIndustryFilterBtn" class="btn btn-outline-dark">Reset</button> 
                 </div>
-                <ul>
-                    <input type="checkbox" ><li>HTML</li>
-                    <input type="checkbox" ><li>JS</li>
-                    <input type="checkbox" ><li>CSS</li>
-                    <input type="checkbox" ><li>HTML</li>
-                    <input type="checkbox" ><li>JS</li>
-                    <input type="checkbox" ><li>CSS</li>
-                    <input type="checkbox" ><li>HTML</li>
-                    <input type="checkbox" ><li>JS</li>
-                    <input type="checkbox" ><li>CSS</li>
-                    <input type="checkbox" ><li>HTML</li>
-                    <input type="checkbox" ><li>JS</li>
-                    <input type="checkbox" ><li>CSS</li>
-                    <input type="checkbox" ><li>HTML</li>
-                    <input type="checkbox" ><li>JS</li>
-                    <input type="checkbox" ><li>CSS</li>
-                    <input type="checkbox" ><li>HTML</li>
-                    <input type="checkbox" ><li>JS</li>
-                    <input type="checkbox" ><li>CSS</li>
-                    <input type="checkbox" ><li>HTML</li>
-                    <input type="checkbox" ><li>JS</li>
-                    <input type="checkbox" ><li>CSS</li>
-                    <input type="checkbox" ><li>HTML</li>
-                    <input type="checkbox" ><li>JS</li>
-                    <input type="checkbox" ><li>CSS</li>
-                    <input type="checkbox" ><li>HTML</li>
-                    <input type="checkbox" ><li>JS</li>
-                    <input type="checkbox" ><li>CSS</li>
-                    <input type="checkbox" ><li>HTML</li>
-                    <input type="checkbox" ><li>JS</li>
-                    <input type="checkbox" ><li>CSS</li>
-                    <input type="checkbox" ><li>HTML</li>
-                    <input type="checkbox" ><li>JS</li>
-                    <input type="checkbox" ><li>CSS</li>
-                    <input type="checkbox" ><li>HTML</li>
-                    <input type="checkbox" ><li>JS</li>
+                <ul id="industryList">
+                    {% for industry in industries %}
+                        <li>
+                            <input type="checkbox" class="industry-checkbox" id="ind{{ forloop.counter }}">
+                            <label for="ind{{ forloop.counter }}">{{ industry.name }}</label>
+                            <span class="num">{{ industry.num_projects }}</span> <br>
+                        </li>
+                    {% endfor %}
                 </ul>
             </div>
             <div class="technologies">
                 <div class="nav">
                     <h4>Technologies</h4>
-                    <input type="text" placeholder="Filter technologies...">
-                    <button type="button" class="btn btn-outline-dark">Reset</button>
+                    <input type="text" id="technologyFilter" placeholder="Filter technologies..."> 
+                    <button type="button" id="resetTechnologyFilterBtn" class="btn btn-outline-dark">Reset</button> 
                 </div>
-                <ul>
-                    <input type="checkbox" ><li>CSS</li>
-                    <input type="checkbox" ><li>HTML</li>
-                    <input type="checkbox" ><li>JS</li>
-                    <input type="checkbox" ><li>CSS</li>
-                    <input type="checkbox" ><li>HTML</li>
-                    <input type="checkbox" ><li>JS</li>
-                    <input type="checkbox" ><li>CSS</li>
-                    <input type="checkbox" ><li>HTML</li>
-                    <input type="checkbox" ><li>JS</li>
-                    <input type="checkbox" ><li>CSS</li>
-                    <input type="checkbox" ><li>HTML</li>
-                    <input type="checkbox" ><li>JS</li>
-                    <input type="checkbox" ><li>CSS</li>
-                    <input type="checkbox" ><li>HTML</li>
-                    <input type="checkbox" ><li>JS</li>
-                    <input type="checkbox" ><li>CSS</li>
-                    <input type="checkbox" ><li>HTML</li>
-                    <input type="checkbox" ><li>JS</li>
-                    <input type="checkbox" ><li>CSS</li>
-                    <input type="checkbox" ><li>HTML</li>
-                    <input type="checkbox" ><li>JS</li>
-                    <input type="checkbox" ><li>CSS</li>
-                    <input type="checkbox" ><li>HTML</li>
-                    <input type="checkbox" ><li>JS</li>
-                    <input type="checkbox" ><li>CSS</li>
-                    <input type="checkbox" ><li>HTML</li>
-                    <input type="checkbox" ><li>JS</li>
+                <ul id="technologyList">
+                    {% for technology in technologies %}
+                        <li>
+                            <input type="checkbox" class="technology-checkbox" id="teh{{ forloop.counter }}">
+                            <label for="teh{{ forloop.counter }}">{{ technology.name }}</label>
+                            <span class="num">{{ technology.num_projects }}</span> <br>
+                        </li>
+                    {% endfor %}
                 </ul>
-            
             </div>
         </div>
     </div>
     <div class="col-lg-7">
-        <div class="border bg-light container-main">
-            
+        <div class="border bg-light container-main">   
+            <div class="nav-2">
+                <div class="btn-group-toggle-1">
+                    <button type="button" class="btn btn-outline-dark custom-btn" data-value="Private">Private</button>
+                    <button type="button" class="btn btn-outline-dark custom-btn" data-value="Public">Public</button>
+                    <button type="button" class="btn btn-outline-dark custom-btn" data-value="MySets">My Sets</button>
+                </div>
+                <div class="btn-group-toggle-2">
+                    <button type="button" class="btn btn-outline-primary" data-value="Add project">Add project</button>
+                    <button type="button" class="btn btn-outline-success" data-value="Upload .csv">Upload .csv</button>
+                    <button type="button" class="btn btn-outline-warning" data-value="Add new set">Add new set</button>
+                </div>
+                <input type="text" class="filter-of-container-main" placeholder="Search...">
+                <button type="button" class="btn btn-outline-dark search_" data-value="Search">Search</button>
+            </div>
+            {% block ptoj %}
+            {% endblock %}
         </div>
     </div>
 </div>
-{% endblock %}  
+{% endblock %}

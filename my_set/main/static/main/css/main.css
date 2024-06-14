@@ -133,9 +133,86 @@ i .fa-user {
     z-index: 1;
     background-color: #F8F9FA;
 }
-
-
-
+.nav-2 {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    height: 140px;
+    background-color: #F8F9FA;
+}
+.num {
+    position: absolute;
+    right: 74%;
+}
+li label {
+    padding-right: 20%;
+}
 .container-main {
+    position: relative;
     height: 88vh;
+    overflow: auto;
+    padding: 0px 10px;
+}
+.container-main button {
+    border-radius: 5px;
+}
+.btn-group-toggle-1 {
+    position: absolute;
+    display: flex;
+    float: left;
+    top: 20px;
+}
+.btn-group-toggle-2 {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+.filter-of-container-main {
+    position: relative;
+    top: 60px;
+    margin: 20px 0px;
+    width: 90%;
+    height: 38px;
+    padding-left: 15px;
+}
+.search_ {
+    position: absolute;
+    border-color: rgb(117, 117, 117);
+    top: 80px;
+    right: 35px;
+}
+.custom-btn {
+    margin-right: 0;
+}
+.custom-btn:last-child {
+    margin-right: 0;
+}
+.search_:hover {
+    background-color: rgb(134, 129, 129);
+    border-color: rgb(117, 117, 117);
+}
+.project_ {
+    top: 30px;
+    width: 100%;
+    min-height: 150px;
+    box-sizing: border-box;
+    margin: 10px 0px;
+    border-top: 2px solid rgba(128, 128, 128, 0.5); 
+    border-bottom: 2px solid rgba(128, 128, 128, 0.5);    
+}
+.box {
+    min-height: 30px;
+    padding: 5px 30px;
+}
+.title_ {
+    padding-top: 20px;
+    font-weight: 700;
+}
+.industries_,
+.technologies_ {
+    color: rgb(73, 71, 156);
+}
+.url_ {
+    padding-bottom: 30px;
+    color: black;
 }
