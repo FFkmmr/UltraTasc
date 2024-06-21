@@ -50,7 +50,7 @@
                 </div>
                 <div class="btn-group-toggle-2">
                     <button type="button" class="btn btn-outline-primary" data-value="Add project">Add project</button>
-                    <button type="button" class="btn btn-outline-success" data-value="Upload .csv">Upload .csv</button>
+                    <a href="{% url 'import_csv' %}" type="button" class="btn btn-outline-success" data-value="Upload .csv">Upload .csv</a>
                     <button type="button" class="btn btn-outline-warning" data-value="Add new set">Add new set</button>
                 </div>
                 <input type="text" class="filter-of-container-main" placeholder="Search...">
@@ -58,7 +58,30 @@
             </div>
 
             <div id="projects">
-                <h1>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</h1>
+                {% for project in projects %}
+    <div class="row project_">
+        <div class="box col-sm-2" style="padding-top: 20px;">Title:</div>
+        <div class="box col-sm-10 title_">{{ project.title }}</div>
+        <div class="box col-sm-2">Industries:</div>
+        <div class="box col-sm-10 industries_">
+            {% for industry in project.industries.all %}
+                {{ industry.name }}
+                {% if not forloop.last %}, {% endif %}
+            {% endfor %}
+        </div>
+        <div class="box col-sm-2">Description:</div>
+        <div class="box col-sm-10">{{ project.description }}</div>
+        <div class="box col-sm-2">Technologies:</div>
+        <div class="box col-sm-10 technologies_">
+            {% for technology in project.technologies.all %}
+                {{ technology.name }}
+                {% if not forloop.last %}, {% endif %}
+            {% endfor %}
+        </div>
+        <div class="box col-sm-2">Url:</div>
+        <div class="box col-sm-10 url_"><a href="" class="url_">{{ project.url }}</a></div>   
+    </div> 
+{% endfor %}
             </div>
         </div>
     </div>

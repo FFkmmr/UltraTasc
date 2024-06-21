@@ -1,25 +1,16 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.core.files.storage import FileSystemStorage
+from django.views.decorators.csrf import csrf_exempt
+from django.template.loader import render_to_string
+from .models import Project, Technology, Industry
 from django.shortcuts import render, redirect
+from django.http import HttpResponse, JsonResponse
 from django.contrib import messages
 from .forms import CreateUserForm
-from django.http import JsonResponse
-from django.template.loader import render_to_string
-from django.db.models import Q
+from django.db import transaction
 import json
-from django.views.decorators.csrf import csrf_exempt
-
-from .models import Project, Technology, Industry
-
-@login_required(login_url='login')
-def index(request):
-    technologies = Technology.objects.all()
-    industries = Industry.objects.all()
-    context = {
-        'technologies': technologies,
-        'industries': industries,
-    }
-    return render(request, 'main/index.html', context)
+import csv
 
 def register_page(request):
     if request.user.is_authenticated:
@@ -51,21 +42,17 @@ def login_page(request):
 def logout_user(request):
     logout(request)
     return redirect('login')
-
-
-def project_list_view(request):
-    projects = Project.objects.all()
-    industries = Industry.objects.all()
+@login_required(login_url='login')
+def index(request):
     technologies = Technology.objects.all()
-
+    industries = Industry.objects.all()
+    projects = Project.objects.all()
     context = {
-        'projects': projects,
-        'industries': industries,
         'technologies': technologies,
+        'industries': industries,
+        'projects' : projects,
     }
-
-    return render(request, 'main/projects.html', context)
-
+    return render(request, 'main/index.html', context)
 @csrf_exempt
 def project_filter_view(request):
     selected_industries = request.POST.get('industries')
@@ -90,3 +77,45 @@ def project_filter_view(request):
 
     html = render_to_string('main/projects.html', context)
     return JsonResponse({'html': html})
+@login_required(login_url='login')
+def import_csv_view(request):
+    if request.method == 'POST' and request.FILES.get('csv_file'):
+        csv_file = request.FILES['csv_file']
+        fs = FileSystemStorage()
+        filename = fs.save(csv_file.name, csv_file)
+        file_path = fs.path(filename)
+        
+        try:
+            with open(file_path, 'r', encoding='utf-8') as file:
+                reader = csv.DictReader(file)
+                with transaction.atomic():
+                    for row in reader:
+                        project = Project(
+                            title=row['title'],
+                            url=row['url'],
+                            description=row['description'].strip()
+                        )
+                        project.save()
+                        
+                        tech_names = row['technologies'].split(',')
+                        industry_names = row['industries'].split(',')
+                        
+                        technologies = []
+                        for tech_name in tech_names:
+                            technology, created = Technology.objects.get_or_create(name=tech_name.strip())
+                            technologies.append(technology)
+                        
+                        industries = []
+                        for industry_name in industry_names:
+                            industry, created = Industry.objects.get_or_create(name=industry_name.strip())
+                            industries.append(industry)
+                        
+                        project.technologies.set(technologies)
+                        project.industries.set(industries)
+            
+            return redirect('home')
+        
+        except Exception as e:
+            return HttpResponse(f"Error: {e}")
+    
+    return render(request, 'import_csv.html')
