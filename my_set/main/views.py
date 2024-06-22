@@ -7,7 +7,7 @@ from .models import Project, Technology, Industry
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
 from django.contrib import messages
-from .forms import CreateUserForm
+from .forms import CreateUserForm, CreateProjectForm
 from django.db import transaction
 import json
 import csv
@@ -119,3 +119,28 @@ def import_csv_view(request):
             return HttpResponse(f"Error: {e}")
     
     return render(request, 'import_csv.html')
+
+
+def add_project(request):
+    if request.method == 'POST':
+        form = CreateProjectForm(request.POST)
+        if form.is_valid():
+            project = form.save()
+
+            new_technologies = form.cleaned_data.get('new_technologies')
+            if new_technologies:
+                tech_list = [tech.strip() for tech in new_technologies.split(',')]
+                for tech_name in tech_list:
+                    technology, created = Technology.objects.get_or_create(name=tech_name)
+                    project.technologies.add(technology)
+            new_industries = form.cleaned_data.get('new_industries')
+            if new_industries:
+                ind_list = [ind.strip() for ind in new_industries.split(',')]
+                for ind_name in ind_list:
+                    industry, created = Industry.objects.get_or_create(name=ind_name)
+                    project.industries.add(industry)
+
+            return redirect('home')
+    else:
+        form = CreateProjectForm()
+    return render(request, 'add_project.html', {'form': form})

@@ -153,10 +153,11 @@ i .fa-user {
 }
 .num {
     position: absolute;
-    right: 74%;
+    right: 10px;
 }
-li label {
-    padding-right: 20%;
+#industryList li,
+#technologyList li {
+    position: relative;
 }
 .container-main {
     position: relative;
@@ -251,4 +252,20 @@ li label {
     position: absolute;
     left: 90%;
     color: white;
+}
+.block_ {
+    display: block;   
+}
+.block_ h5 {
+    width: 50%;
+}
+.add-block-form {
+    width: 60%;
+    overflow: auto;
+}
+.add-input-block {
+    width: 150px;
+}
+.wide-input {
+    width: 400px;
 }
