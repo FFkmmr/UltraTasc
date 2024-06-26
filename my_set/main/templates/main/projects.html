@@ -1,6 +1,9 @@
-
 {% for project in projects %}
     <div class="row project_">
+    
+        <div class="edit-project-button"><a href="{% url 'edit_project' project.id %}" class="btn btn-outline-secondary">Edit</a></div>
+        <div class="delete-project-button"><a href="{% url 'delete_project' project.id %}" class="btn btn-outline-danger ">Delete</a></div>
+
         <div class="box col-sm-2" style="padding-top: 20px;">Title:</div>
         <div class="box col-sm-10 title_">{{ project.title }}</div>
         <div class="box col-sm-2">Industries:</div>

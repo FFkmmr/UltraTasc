@@ -4,7 +4,7 @@ from django.core.files.storage import FileSystemStorage
 from django.views.decorators.csrf import csrf_exempt
 from django.template.loader import render_to_string
 from .models import Project, Technology, Industry
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, JsonResponse
 from django.contrib import messages
 from .forms import CreateUserForm, CreateProjectForm
@@ -148,3 +148,26 @@ def add_project(request):
         form = CreateProjectForm()
 
     return render(request, 'add_project.html', {'form': form})
+
+@login_required(login_url='login')
+def delete_project(request, project_id):
+    project = get_object_or_404(Project, id=project_id, user=request.user)
+    if request.method == 'POST':
+        project.delete()
+        return redirect('home')
+    return render(request, 'delete_project.html', {'project': project})
+
+
+@login_required(login_url='login')
+def edit_project(request, project_id):
+    project = get_object_or_404(Project, id=project_id, user=request.user)
+    if request.method == 'POST':
+        form = CreateProjectForm(request.POST, instance=project)
+        if form.is_valid():
+            form.save()
+            return redirect('home')
+    else:
+        form = CreateProjectForm(instance=project)
+    return render(request, 'edit_project.html', {'form': form})
+
+
