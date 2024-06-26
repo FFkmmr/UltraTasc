@@ -2,7 +2,7 @@ import csv
 from django.core.management.base import BaseCommand
 from main.models import Project, Technology, Industry
 
-class Command(BaseCommand):
+class import_csv(BaseCommand):
     help = 'Import projects from a CSV file'
 
     def handle(self):
@@ -22,7 +22,7 @@ class Command(BaseCommand):
                 for tech_name in technologies:
                     technology = Technology.objects.get_or_create(name=tech_name.strip())
                     project.technologies.add(technology)
-
+    
                 for industry_name in industries:
                     industry = Industry.objects.get_or_create(name=industry_name.strip())
                     project.industries.add(industry)

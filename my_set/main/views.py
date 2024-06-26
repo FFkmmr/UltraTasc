@@ -44,47 +44,51 @@ def logout_user(request):
     return redirect('login')
 @login_required(login_url='login')
 def index(request):
-    technologies = Technology.objects.all()
-    industries = Industry.objects.all()
-    projects = Project.objects.all()
+    technologies = Technology.objects.filter(project__user=request.user).distinct()
+    industries = Industry.objects.filter(project__user=request.user).distinct()
+    projects = Project.objects.filter(user=request.user)
     context = {
         'technologies': technologies,
         'industries': industries,
-        'projects' : projects,
-    }
-    return render(request, 'main/index.html', context)
-@csrf_exempt
-def project_filter_view(request):
-    selected_industries = request.POST.get('industries')
-    selected_technologies = request.POST.get('technologies')
-    selected_industries = json.loads(selected_industries) if selected_industries else []
-    selected_technologies = json.loads(selected_technologies) if selected_technologies else []
-    
-    filters = {}
-
-    if selected_industries:
-        filters['industries__name__in'] = selected_industries
-    if selected_technologies:
-        filters['technologies__name__in'] = selected_technologies
-
-    projects = Project.objects.filter(
-        **filters
-    )
-
-    context = {
         'projects': projects,
     }
+    return render(request, 'main/index.html', context)
 
-    html = render_to_string('main/projects.html', context)
-    return JsonResponse({'html': html})
+@csrf_exempt
 @login_required(login_url='login')
+def project_filter_view(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            selected_industries = data.get('industries', [])
+            selected_technologies = data.get('technologies', [])
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON'}, status=400)
+
+        filters = {'user': request.user}
+        
+        if selected_industries:
+            filters['industries__name__in'] = selected_industries
+        if selected_technologies:
+            filters['technologies__name__in'] = selected_technologies
+
+        projects = Project.objects.filter(**filters)
+        context = {
+            'projects': projects,
+        }
+        print(filters)
+        html = render_to_string('main/projects.html', context)
+        return JsonResponse({'html': html})
+    else:
+        return JsonResponse({'error': 'Invalid request method'}, status=400)
+
+@login_required( login_url = 'login' )
 def import_csv_view(request):
     if request.method == 'POST' and request.FILES.get('csv_file'):
         csv_file = request.FILES['csv_file']
         fs = FileSystemStorage()
         filename = fs.save(csv_file.name, csv_file)
         file_path = fs.path(filename)
-        
         try:
             with open(file_path, 'r', encoding='utf-8') as file:
                 reader = csv.DictReader(file)
@@ -93,39 +97,37 @@ def import_csv_view(request):
                         project = Project(
                             title=row['title'],
                             url=row['url'],
-                            description=row['description'].strip()
+                            description=row['description'].strip(),
+                            user=request.user,
                         )
                         project.save()
-                        
                         tech_names = row['technologies'].split(',')
                         industry_names = row['industries'].split(',')
-                        
                         technologies = []
                         for tech_name in tech_names:
                             technology, created = Technology.objects.get_or_create(name=tech_name.strip())
                             technologies.append(technology)
-                        
                         industries = []
                         for industry_name in industry_names:
                             industry, created = Industry.objects.get_or_create(name=industry_name.strip())
                             industries.append(industry)
-                        
                         project.technologies.set(technologies)
                         project.industries.set(industries)
-            
             return redirect('home')
-        
         except Exception as e:
             return HttpResponse(f"Error: {e}")
-    
     return render(request, 'import_csv.html')
 
 
+@login_required(login_url='login')
 def add_project(request):
     if request.method == 'POST':
         form = CreateProjectForm(request.POST)
         if form.is_valid():
-            project = form.save()
+            project = form.save(commit=False)
+            project.user = request.user  
+            project.save()
+            form.save_m2m() 
 
             new_technologies = form.cleaned_data.get('new_technologies')
             if new_technologies:
@@ -133,6 +135,7 @@ def add_project(request):
                 for tech_name in tech_list:
                     technology, created = Technology.objects.get_or_create(name=tech_name)
                     project.technologies.add(technology)
+
             new_industries = form.cleaned_data.get('new_industries')
             if new_industries:
                 ind_list = [ind.strip() for ind in new_industries.split(',')]
@@ -143,4 +146,5 @@ def add_project(request):
             return redirect('home')
     else:
         form = CreateProjectForm()
+
     return render(request, 'add_project.html', {'form': form})

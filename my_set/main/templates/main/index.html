@@ -15,7 +15,7 @@
                 <ul id="industryList">
                     {% for industry in industries %}
                         <li>
-                            <input type="checkbox" class="industry-checkbox" id="ind{{ forloop.counter }}">
+                            <input type="checkbox" class="industry-checkbox" id="ind{{ forloop.counter }}" value="{{ industry.name }}">
                             <label for="ind{{ forloop.counter }}">{{ industry.name }}</label>
                             <span class="num">{{ industry.num_projects }}</span> <br>
                         </li>
@@ -30,9 +30,9 @@
                 </div>
                 <ul id="technologyList">
                     {% for technology in technologies %}
-                        <li>
-                            <input type="checkbox" class="technology-checkbox" id="teh{{ forloop.counter }}">
-                            <label for="teh{{ forloop.counter }}">{{ technology.name }}</label>
+                        <li class="technology-checkbox">
+                            <input type="checkbox" class="technology-checkbox" id="teh{{ forloop.counter }}" value="{{ technology.name }}">
+                            <label for="teh{{ forloop.counter }}" class="technology-checkbox">{{ technology.name }}</label>
                             <span class="num">{{ technology.num_projects }}</span> <br>
                         </li>
                     {% endfor %}
@@ -53,35 +53,14 @@
                     <a href="{% url 'import_csv' %}" type="button" class="btn btn-outline-success" data-value="Upload .csv">Upload .csv</a>
                     <a href="/" type="button" class="btn btn-outline-warning" data-value="Add new set">Add new set</a>
                 </div>
-                <input type="text" class="filter-of-container-main" placeholder="Search...">
-                <button type="button" class="btn btn-outline-dark search_" data-value="Search">Search</button>
+                <div>
+                    <input type="text" class="filter-of-container-main" placeholder="Search...">
+                    <button type="button" class="btn btn-outline-dark search_" data-value="Search">Search</button>
+                </div>
             </div>
 
             <div id="projects">
-                {% for project in projects %}
-    <div class="row project_">
-        <div class="box col-sm-2" style="padding-top: 20px;">Title:</div>
-        <div class="box col-sm-10 title_">{{ project.title }}</div>
-        <div class="box col-sm-2">Industries:</div>
-        <div class="box col-sm-10 industries_">
-            {% for industry in project.industries.all %}
-                {{ industry.name }}
-                {% if not forloop.last %}, {% endif %}
-            {% endfor %}
-        </div>
-        <div class="box col-sm-2">Description:</div>
-        <div class="box col-sm-10">{{ project.description }}</div>
-        <div class="box col-sm-2">Technologies:</div>
-        <div class="box col-sm-10 technologies_">
-            {% for technology in project.technologies.all %}
-                {{ technology.name }}
-                {% if not forloop.last %}, {% endif %}
-            {% endfor %}
-        </div>
-        <div class="box col-sm-2">Url:</div>
-        <div class="box col-sm-10 url_"><a href="" class="url_">{{ project.url }}</a></div>   
-    </div> 
-{% endfor %}
+                {% include 'main/projects.html' %}
             </div>
         </div>
     </div>
